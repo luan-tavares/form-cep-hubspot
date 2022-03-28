@@ -10,14 +10,7 @@ function messageFormReadyHandler() {
             return false;
         }
         if (event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormReady') {
-            $zipElement = findElement(ZIP_ELEMENT);
-            $zipElement.parent().append($(".loading"));
-            let cssLink = document.createElement("link");
-            cssLink.href = "./main.css";
-            cssLink.rel = "stylesheet";
-            cssLink.type = "text/css";
-            $(IFRAME_ELEMENT).contents().find("body").append(cssLink);
-            $zipElement.on("change", zipCodeInputChangeHandler());
+            findElement(ZIP_ELEMENT).on("change", zipCodeInputChangeHandler());
         }
     }
 }
@@ -30,18 +23,29 @@ function findElement(selector) {
     return $(selector);
 }
 
+function getUri(zipCode) {
+    return `https://viacep.com.br/ws/${zipCode}/json/`
+}
+
 
 function zipCodeInputChangeHandler() {
     const $city = findElement(CITY_ELEMENT);
     const $state = findElement(STATE_ELEMENT);
+    const $zipElement = findElement(ZIP_ELEMENT);
+    $zipElement.parent().append($(".loading"));
     const $loading = findElement(".loading");
+    let cssLink = document.createElement("link");
+    cssLink.href = "./main.css";
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    $(IFRAME_ELEMENT).contents().find("body").append(cssLink);
     return function (event) {
         const $cep = event.target;
         $loading.removeClass("d-none");
         $city.removeClass("error");
         $state.removeClass("error");
-        $.get(`https://viacep.com.br/ws/${$cep.value}/json/`).done(function (data) {
-            if (data.error) {
+        $.get(getUri($cep.value)).done(function (data) {
+            if (data.erro) {
                 $city.val("").change();
                 $state.val("").change();
             }
