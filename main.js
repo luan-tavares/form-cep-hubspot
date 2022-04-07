@@ -31,6 +31,8 @@ function getUri(zipCode) {
 function zipCodeInputChangeHandler() {
     const $city = findElement(CITY_ELEMENT);
     const $state = findElement(STATE_ELEMENT);
+    $state.attr("readonly", "true");
+    $city.attr("readonly", "true");
     const $zipElement = findElement(ZIP_ELEMENT);
     $zipElement.parent().append($(".loading"));
     const $loading = findElement(".loading");
@@ -48,6 +50,7 @@ function zipCodeInputChangeHandler() {
             if (data.erro) {
                 $city.val("").change();
                 $state.val("").change();
+                return;
             }
             $city.val(data.localidade).change();
             $state.val(data.uf).change();
